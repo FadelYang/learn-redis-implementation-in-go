@@ -1,4 +1,4 @@
-DB_URL=postgres://postgres:postgres@localhost:5432/example?sslmode=disable
+DB_URL=postgres://postgres:postgres@localhost:5432/redis-go?sslmode=disable
 
 migrate-create:
 	migrate create -ext sql -dir db/migrations -seq $(name)
