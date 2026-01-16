@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"project-root/modules/books/dto"
 	"project-root/modules/books/repository"
 	"time"
@@ -12,7 +11,7 @@ import (
 )
 
 type BookService interface {
-	GetBooks() ([]dto.BookDTO, error)
+	GetBooks(ctx context.Context) ([]dto.BookDTO, error)
 }
 
 type bookService struct {
@@ -30,8 +29,7 @@ func NewBookService(
 	}
 }
 
-func (s *bookService) GetBooks() ([]dto.BookDTO, error) {
-	ctx := context.Background()
+func (s *bookService) GetBooks(ctx context.Context) ([]dto.BookDTO, error) {
 	cacheKey := "books:all"
 
 	val, err := s.redisClient.Get(ctx, cacheKey).Result()
@@ -58,15 +56,8 @@ func (s *bookService) GetBooks() ([]dto.BookDTO, error) {
 		})
 	}
 
-	bytes, err := json.Marshal(result)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.redisClient.Set(ctx, cacheKey, bytes, time.Minute).Err(); err != nil {
-		return nil, err
-	} else {
-		log.Println("sucess store data to redis")
+	if bytes, err := json.Marshal(result); err == nil {
+		_ = s.redisClient.Set(ctx, cacheKey, bytes, time.Minute).Err()
 	}
 
 	return result, nil

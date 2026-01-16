@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 	"project-root/common"
 	"project-root/modules/books/dto"
@@ -28,9 +27,8 @@ func NewBookController(bookService services.BookService) *BookController {
 // @Success 200 {object} common.BaseResponse[dto.BookDTO]
 // @Router /books [get]
 func (c *BookController) GetAll(ctx *gin.Context) {
-	books, err := c.bookService.GetBooks()
+	books, err := c.bookService.GetBooks(ctx)
 	if err != nil {
-		log.Fatalf("failed to get books: %v", err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"errors": "failed to get books data"})
 		return
 	}
