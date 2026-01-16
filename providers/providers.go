@@ -5,6 +5,7 @@ import (
 	exProvider "project-root/modules/examples/providers"
 	userProvider "project-root/modules/users/providers"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -14,7 +15,7 @@ type Providers struct {
 	Books    *bookProvider.Provider
 }
 
-func Init(db *gorm.DB) *Providers {
+func Init(db *gorm.DB, redis *redis.Client) *Providers {
 	return &Providers{
 		Examples: exProvider.NewProvider(db),
 		Users:    userProvider.NewProvider(db),

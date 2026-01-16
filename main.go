@@ -20,10 +20,12 @@ func main() {
 	config.InitEnv()
 
 	db := config.InitDB()
+	redisClient := config.InitRedis()
+	defer redisClient.Close()
 
 	db.AutoMigrate(&model.Example{})
 
-	p := providers.Init(db)
+	p := providers.Init(db, redisClient)
 	r := gin.Default()
 	routes.InitRoutes(r, p)
 
