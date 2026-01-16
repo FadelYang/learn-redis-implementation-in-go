@@ -122,6 +122,27 @@ paths:
       summary: get books
       tags:
       - books
+    post:
+      consumes:
+      - application/json
+      description: get all books
+      parameters:
+      - description: request bodu for create a book [RAW]
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BookDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/common.BaseResponse-dto_BookDTO'
+      summary: get books
+      tags:
+      - books
   /examples:
     get:
       consumes:
