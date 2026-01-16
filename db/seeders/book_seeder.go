@@ -18,7 +18,7 @@ func (s BookSeeder) Run(db *gorm.DB) error {
 
 	for range 1000 {
 		newUUID, _ := uuid.Parse(gofakeit.UUID())
-		book := dto.Book{
+		book := dto.BookDTO{
 			ID:          newUUID,
 			Title:       gofakeit.BookTitle(),
 			Description: gofakeit.ProductDescription(),

@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Book struct {
+type BookDTO struct {
 	ID          uuid.UUID `json:"id" example:"a53515e3-5a7f-440b-82f6-3d84ac7ce746"`
 	Title       string    `json:"title" example:"Sang Mentari Di Malam Hari"`
 	Description string    `json:"description" example:"di sebuah malam yang gelap, di mana kah sang mentari terlelap?"`
