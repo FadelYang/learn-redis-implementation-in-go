@@ -10,4 +10,5 @@ func RegisterRoutes(rg *gin.RouterGroup, bookProvider *providers.Provider) {
 	bookRoutes := rg.Group("/books")
 
 	bookRoutes.GET("", bookProvider.BookController.GetAll)
+	bookRoutes.POST("", bookProvider.BookController.Create)
 }

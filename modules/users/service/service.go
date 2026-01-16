@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"project-root/modules/users/dto"
 	"project-root/modules/users/model"
 	"project-root/modules/users/repository"
@@ -75,8 +74,6 @@ func (s *userService) Create(form dto.CreateUser) (dto.UserDTO, error) {
 
 	createdUser, err := s.userRepo.Create(userForm)
 	if err != nil {
-		fmt.Println("created user", err)
-
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr != nil {
 			switch pgErr.ConstraintName {
@@ -111,8 +108,6 @@ func (s *userService) Update(user dto.UpdateUser, userID uuid.UUID) (dto.UserDTO
 
 	updatedData, err := s.userRepo.Update(existData)
 	if err != nil {
-		fmt.Println("created user", err)
-
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr != nil {
 			switch pgErr.ConstraintName {
