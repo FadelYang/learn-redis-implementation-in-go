@@ -8,6 +8,29 @@
     },
     "basePath": "/api/v1",
     "paths": {
+        "/books": {
+            "get": {
+                "description": "get all books",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "books"
+                ],
+                "summary": "get books",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.BaseResponse-dto_BookDTO"
+                        }
+                    }
+                }
+            }
+        },
         "/examples": {
             "get": {
                 "description": "get all example data",
@@ -253,6 +276,20 @@
         }
     },
     "definitions": {
+        "common.BaseResponse-dto_BookDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/dto.BookDTO"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
         "common.BaseResponse-dto_ExampleDTO": {
             "type": "object",
             "properties": {
@@ -278,6 +315,31 @@
                 },
                 "status": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.BookDTO": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string",
+                    "example": "Michael Van Brave"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "di sebuah malam yang gelap, di mana kah sang mentari terlelap?"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "a53515e3-5a7f-440b-82f6-3d84ac7ce746"
+                },
+                "publisher": {
+                    "type": "string",
+                    "example": "Penerbit Kakamuda"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Sang Mentari Di Malam Hari"
                 }
             }
         },

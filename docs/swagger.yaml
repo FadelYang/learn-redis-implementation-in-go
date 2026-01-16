@@ -1,5 +1,14 @@
 basePath: /api/v1
 definitions:
+  common.BaseResponse-dto_BookDTO:
+    properties:
+      data:
+        $ref: '#/definitions/dto.BookDTO'
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
   common.BaseResponse-dto_ExampleDTO:
     properties:
       data:
@@ -17,6 +26,24 @@ definitions:
         type: string
       status:
         type: integer
+    type: object
+  dto.BookDTO:
+    properties:
+      author:
+        example: Michael Van Brave
+        type: string
+      description:
+        example: di sebuah malam yang gelap, di mana kah sang mentari terlelap?
+        type: string
+      id:
+        example: a53515e3-5a7f-440b-82f6-3d84ac7ce746
+        type: string
+      publisher:
+        example: Penerbit Kakamuda
+        type: string
+      title:
+        example: Sang Mentari Di Malam Hari
+        type: string
     type: object
   dto.CreateExample:
     properties:
@@ -80,6 +107,21 @@ info:
   title: Go, Gin, and Postgre Base Project
   version: "1.0"
 paths:
+  /books:
+    get:
+      consumes:
+      - application/json
+      description: get all books
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.BaseResponse-dto_BookDTO'
+      summary: get books
+      tags:
+      - books
   /examples:
     get:
       consumes:
