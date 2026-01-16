@@ -15,10 +15,10 @@ type Providers struct {
 	Books    *bookProvider.Provider
 }
 
-func Init(db *gorm.DB, redis *redis.Client) *Providers {
+func Init(db *gorm.DB, redisClient *redis.Client) *Providers {
 	return &Providers{
 		Examples: exProvider.NewProvider(db),
 		Users:    userProvider.NewProvider(db),
-		Books:    bookProvider.NewProvider(db),
+		Books:    bookProvider.NewProvider(db, redisClient),
 	}
 }
