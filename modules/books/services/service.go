@@ -7,7 +7,6 @@ import (
 	"project-root/modules/books/dto"
 	"project-root/modules/books/model"
 	"project-root/modules/books/repository"
-	"project-root/tools"
 	"time"
 
 	"github.com/google/uuid"
@@ -82,10 +81,7 @@ func (s *bookService) Create(ctx context.Context, book dto.BookDTO) (dto.BookDTO
 	createdBook, err := s.bookRepository.Create(bookForm)
 	if err != nil {
 		if errors.Is(err, repository.ErrDuplicateBookTitle) {
-			return dto.BookDTO{}, tools.NewValidationError(
-				"title",
-				"title already exists",
-			)
+			return dto.BookDTO{}, repository.ErrDuplicateBookTitle
 		}
 		return dto.BookDTO{}, err
 	}
@@ -115,10 +111,7 @@ func (s *bookService) Update(ctx context.Context, book dto.BookDTO, bookID uuid.
 	updatedBook, err := s.bookRepository.Update(existingBook)
 	if err != nil {
 		if errors.Is(err, repository.ErrDuplicateBookTitle) {
-			return dto.BookDTO{}, tools.NewValidationError(
-				"title",
-				"title already exists",
-			)
+			return dto.BookDTO{}, repository.ErrDuplicateBookTitle
 		}
 		return dto.BookDTO{}, err
 	}

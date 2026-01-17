@@ -78,9 +78,9 @@ func (s *userService) Create(form dto.CreateUser) (dto.UserDTO, error) {
 		if errors.As(err, &pgErr) && pgErr != nil {
 			switch pgErr.ConstraintName {
 			case "users_email_key":
-				return dto.UserDTO{}, tools.NewValidationError("email", ErrDuplicateUserEmail.Error())
+				return dto.UserDTO{}, ErrDuplicateUserEmail
 			case "users_username_key":
-				return dto.UserDTO{}, tools.NewValidationError("username", ErrDuplicateUsername.Error())
+				return dto.UserDTO{}, ErrDuplicateUsername
 			default:
 				return dto.UserDTO{}, err
 			}
@@ -112,9 +112,9 @@ func (s *userService) Update(user dto.UpdateUser, userID uuid.UUID) (dto.UserDTO
 		if errors.As(err, &pgErr) && pgErr != nil {
 			switch pgErr.ConstraintName {
 			case "users_email_key":
-				return dto.UserDTO{}, tools.NewValidationError("email", ErrDuplicateUserEmail.Error())
+				return dto.UserDTO{}, ErrDuplicateUserEmail
 			case "users_username_key":
-				return dto.UserDTO{}, tools.NewValidationError("username", ErrDuplicateUsername.Error())
+				return dto.UserDTO{}, ErrDuplicateUsername
 			default:
 				return dto.UserDTO{}, err
 			}
