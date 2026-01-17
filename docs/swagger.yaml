@@ -18,6 +18,15 @@ definitions:
       status:
         type: integer
     type: object
+  common.BaseResponse-dto_LoginResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dto.LoginResponse'
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
   common.BaseResponse-dto_UserDTO:
     properties:
       data:
@@ -74,6 +83,24 @@ definitions:
         example: Bakwan Jagung
         type: string
     type: object
+  dto.LoginDTO:
+    properties:
+      email:
+        example: fadelanumah@gmail.com
+        type: string
+      password:
+        example: Secretpassword@123
+        type: string
+    type: object
+  dto.LoginResponse:
+    properties:
+      access_token:
+        example: Grgws!23412sA
+        type: string
+      refresh_token:
+        example: Grgws!23412sA
+        type: string
+    type: object
   dto.UpdateUser:
     properties:
       email:
@@ -107,6 +134,50 @@ info:
   title: Go, Gin, and Postgre Base Project
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: request body for log in [RAW]
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.BaseResponse-dto_LoginResponse'
+      summary: Login User
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register user
+      parameters:
+      - description: request body for register an user [RAW]
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/common.BaseResponse-dto_UserDTO'
+      summary: Register User
+      tags:
+      - auth
   /books:
     get:
       consumes:
