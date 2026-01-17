@@ -47,12 +47,16 @@ func (r *bookRepository) GetAll() ([]model.BookModel, error) {
 }
 
 func (r *bookRepository) Create(book model.BookModel) (model.BookModel, error) {
+	ve := tools.NewValidationError()
+
 	if err := r.db.Create(&book).Error; err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr != nil {
 			switch pgErr.ConstraintName {
 			case "books_title_key":
-				return model.BookModel{}, tools.NewValidationError("title", ErrDuplicateBookTitle.Error())
+				ve.Add("title", ErrDuplicateBookTitle.Error())
+
+				return model.BookModel{}, ve
 			default:
 				return model.BookModel{}, err
 			}
@@ -64,6 +68,8 @@ func (r *bookRepository) Create(book model.BookModel) (model.BookModel, error) {
 }
 
 func (r *bookRepository) Update(book model.BookModel) (model.BookModel, error) {
+	ve := tools.NewValidationError()
+
 	if err := r.db.Model(&book).Updates(map[string]any{
 		"title":       book.Title,
 		"description": book.Description,
@@ -73,7 +79,8 @@ func (r *bookRepository) Update(book model.BookModel) (model.BookModel, error) {
 		if errors.As(err, &pgErr) && pgErr != nil {
 			switch pgErr.ConstraintName {
 			case "books_title_key":
-				return model.BookModel{}, tools.NewValidationError("title", ErrDuplicateBookTitle.Error())
+				ve.Add("title", ErrDuplicateBookTitle.Error())
+				return model.BookModel{}, ve
 			default:
 				return model.BookModel{}, err
 			}
