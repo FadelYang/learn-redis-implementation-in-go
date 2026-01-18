@@ -111,3 +111,50 @@ func (c *AuthController) Register(ctx *gin.Context) {
 		},
 	)
 }
+
+// @Tags 					auth
+// @Summary				Refresh Access Token
+// @Description 	Refresh access token
+// @Accept 				json
+// @Produce 			json
+// @Success				200 {object} common.BaseResponse[dto.RefreshResponse]
+// @Router				/auth/refresh [post]
+// @Param					request body dto.RefreshDTO true "request body for refresh access token [RAW]"
+func (c *AuthController) Refresh(ctx *gin.Context) {
+	var refresh dto.RefreshDTO
+	if err := ctx.ShouldBindBodyWithJSON(&refresh); err != nil {
+		log.Printf("failed to refresh access token: %v", err)
+
+		ctx.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"errors": fmt.Sprintf("%s", err.Error()),
+			},
+		)
+		return
+	}
+
+	accessToken, err := c.authService.RefreshLogin(ctx, refresh.RefreshToken)
+	if err != nil {
+		log.Printf("failed to refresh access token: %v", err)
+
+		ctx.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"errors": fmt.Sprintf("%s", err.Error()),
+			},
+		)
+		return
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		common.BaseResponse[dto.RefreshResponse]{
+			Status:  http.StatusOK,
+			Message: "success get refresh token",
+			Data: dto.RefreshResponse{
+				AccessToken: accessToken,
+			},
+		},
+	)
+}
