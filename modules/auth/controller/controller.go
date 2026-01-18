@@ -158,3 +158,47 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 		},
 	)
 }
+
+// @Tags 					auth
+// @Summary				Logout user
+// @Description 	Logout user
+// @Accept 				json
+// @Produce 			json
+// @Success				200 {object} common.BaseResponse[string]
+// @Router				/auth/logout [post]
+// @Param					request body dto.RefreshDTO true "request body for logout user [RAW]"
+func (c *AuthController) Logout(ctx *gin.Context) {
+	var refresh dto.RefreshDTO
+	if err := ctx.ShouldBindBodyWithJSON(&refresh); err != nil {
+		log.Printf("failed to logout: %v", err)
+
+		ctx.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"errors": fmt.Sprintf("%s", err.Error()),
+			},
+		)
+		return
+	}
+
+	if err := c.authService.Logout(ctx, refresh.RefreshToken); err != nil {
+		log.Printf("failed to logout: %v", err)
+
+		ctx.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"errors": fmt.Sprintf("%s", err.Error()),
+			},
+		)
+		return
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		common.BaseResponse[string]{
+			Status:  http.StatusOK,
+			Message: "success logout",
+			Data:    "",
+		},
+	)
+}

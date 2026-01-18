@@ -12,4 +12,5 @@ func RegisterRoutes(rg *gin.RouterGroup, authProvider *providers.Provider) {
 	authRoutes.POST("/login", authProvider.AuthController.Login)
 	authRoutes.POST("/register", authProvider.AuthController.Register)
 	authRoutes.POST("/refresh", authProvider.AuthController.Refresh)
+	authRoutes.POST("/logout", authProvider.AuthController.Logout)
 }

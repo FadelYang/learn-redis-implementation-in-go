@@ -22,6 +22,7 @@ var (
 type AuthService interface {
 	Login(ctx context.Context, loginForm dto.LoginDTO) (dto.LoginResponse, error)
 	RefreshLogin(ctx context.Context, refreshToken string) (string, error)
+	Logout(ctx context.Context, refreshToken string) error
 }
 
 type authService struct {
@@ -135,4 +136,24 @@ func (s *authService) RefreshLogin(ctx context.Context, refreshToken string) (st
 	claims := token.Claims.(*dto.RefreshClaims)
 
 	return s.generateAccessToken(claims.UserID)
+}
+
+func (s *authService) Logout(ctx context.Context, refreshToken string) error {
+	claims := dto.RefreshClaims{}
+
+	token, err := jwt.ParseWithClaims(
+		refreshToken,
+		claims,
+		func(token *jwt.Token) (any, error) {
+			return refreshSecret, nil
+		},
+	)
+	if err != nil || !token.Valid {
+		return nil
+	}
+
+	return s.redisClient.Del(
+		ctx,
+		"refresh:"+claims.ID,
+	).Err()
 }
