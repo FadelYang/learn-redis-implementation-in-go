@@ -82,9 +82,12 @@ func (s *authService) generateAccessToken(userID uuid.UUID) (string, error) {
 }
 
 func (s *authService) generateRefreshToken(userID uuid.UUID) (string, error) {
+	jti := uuid.NewString()
+
 	claims := dto.RefreshClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        jti,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
@@ -92,7 +95,12 @@ func (s *authService) generateRefreshToken(userID uuid.UUID) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString(refreshSecret)
+	signed, err := token.SignedString(refreshSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return signed, nil
 }
 
 func (s *authService) RefreshLogin(ctx context.Context, refreshToken string) (string, error) {
