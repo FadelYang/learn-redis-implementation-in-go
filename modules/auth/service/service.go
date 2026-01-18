@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,15 +27,18 @@ type AuthService interface {
 type authService struct {
 	authRepository authRepository.AuthRepository
 	userRepository userRepository.UserRepository
+	redisClient    *redis.Client
 }
 
 func NewAuthService(
 	authRepository authRepository.AuthRepository,
 	userRepository userRepository.UserRepository,
+	redisClient *redis.Client,
 ) AuthService {
 	return &authService{
 		authRepository: authRepository,
 		userRepository: userRepository,
+		redisClient:    redisClient,
 	}
 }
 
@@ -56,7 +60,7 @@ func (s *authService) Login(ctx context.Context, loginForm dto.LoginDTO) (dto.Lo
 		return dto.LoginResponse{}, err
 	}
 
-	refreshToken, err := s.generateRefreshToken(user.ID)
+	refreshToken, err := s.generateRefreshToken(ctx, user.ID)
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
@@ -81,7 +85,7 @@ func (s *authService) generateAccessToken(userID uuid.UUID) (string, error) {
 	return token.SignedString(accessSecret)
 }
 
-func (s *authService) generateRefreshToken(userID uuid.UUID) (string, error) {
+func (s *authService) generateRefreshToken(ctx context.Context, userID uuid.UUID) (string, error) {
 	jti := uuid.NewString()
 
 	claims := dto.RefreshClaims{
@@ -96,6 +100,16 @@ func (s *authService) generateRefreshToken(userID uuid.UUID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	signed, err := token.SignedString(refreshSecret)
+	if err != nil {
+		return "", err
+	}
+
+	err = s.redisClient.Set(
+		ctx,
+		"refresh:"+jti,
+		userID.String(),
+		7*24*time.Hour,
+	).Err()
 	if err != nil {
 		return "", err
 	}

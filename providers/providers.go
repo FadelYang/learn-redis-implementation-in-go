@@ -22,6 +22,6 @@ func Init(db *gorm.DB, redisClient *redis.Client) *Providers {
 		Examples: exProvider.NewProvider(db),
 		Users:    userProvider.NewProvider(db),
 		Books:    bookProvider.NewProvider(db, redisClient),
-		Auth:     authProvider.NewProvider(db),
+		Auth:     authProvider.NewProvider(db, redisClient),
 	}
 }
