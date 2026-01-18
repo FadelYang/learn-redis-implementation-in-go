@@ -31,5 +31,6 @@ func main() {
 
 	port := 8000
 	fmt.Printf("Server running at port %d\n", port)
+	fmt.Printf("open /api/v1/swagger/index.html for API documentation\n")
 	r.Run(fmt.Sprintf(":%d", port))
 }
