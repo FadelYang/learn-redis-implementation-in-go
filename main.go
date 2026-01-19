@@ -23,11 +23,13 @@ func main() {
 	redisClient := config.InitRedis()
 	defer redisClient.Close()
 
+	redisRateLimiter := config.InitRedisRateLimit(redisClient)
+
 	db.AutoMigrate(&model.Example{})
 
 	p := providers.Init(db, redisClient)
 	r := gin.Default()
-	routes.InitRoutes(r, p)
+	routes.InitRoutes(r, p, redisRateLimiter)
 
 	port := 8000
 	fmt.Printf("Server running at port %d\n", port)
