@@ -135,6 +135,13 @@ func (s *authService) RefreshLogin(ctx context.Context, refreshToken string) (st
 
 	claims := token.Claims.(*dto.RefreshClaims)
 
+	key := "refresh:" + claims.ID
+
+	isRefreshExists, err := s.redisClient.Exists(ctx, key).Result()
+	if err != nil || isRefreshExists == 0 {
+		return "", errors.New("refresh token already revoked, please login again")
+	}
+
 	return s.generateAccessToken(claims.UserID)
 }
 

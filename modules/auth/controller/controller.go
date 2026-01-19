@@ -135,7 +135,7 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 	}
 
 	accessToken, err := c.authService.RefreshLogin(ctx, refresh.RefreshToken)
-	if err != nil {
+	if err != nil || accessToken == "" {
 		log.Printf("failed to refresh access token: %v", err)
 
 		ctx.JSON(
