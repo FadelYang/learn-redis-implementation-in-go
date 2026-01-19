@@ -1,7 +1,9 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v10"
@@ -12,7 +14,16 @@ func RateLimiter(limiter *redis_rate.Limiter, limitNumber redis_rate.Limit) gin.
 		ctx := c.Request.Context()
 
 		ip := c.ClientIP()
-		key := "rl:ip:" + ip
+		if ip == "::1" || ip == "0:0:0:0:0:0:0:1" {
+			ip = "127.0.0.1"
+		}
+
+		route := c.FullPath()
+
+		ip = strings.ReplaceAll(ip, ":", "_")
+		route = strings.ReplaceAll(route, "/", "_")
+
+		key := fmt.Sprintf("%s:%s", route, ip)
 
 		res, err := limiter.Allow(ctx, key, limitNumber)
 		if err != nil {
